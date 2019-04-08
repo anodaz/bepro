@@ -1,0 +1,44 @@
+{
+  "project_info": {
+    "project_number": "570579196949",
+    "firebase_url": "https://bepro-5bfb0.firebaseio.com",
+    "project_id": "bepro-5bfb0",
+    "storage_bucket": "bepro-5bfb0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:570579196949:android:9ae9925c32d5d2c2",
+        "android_client_info": {
+          "package_name": "com.anodaz.bepro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "570579196949-m0ii3hctqvfcud2h0gaihcnt8k67ko1n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.anodaz.bepro",
+            "certificate_hash": "b6155c65b8980c0c3d148f1adfc9ad0f9c92f7c6"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIqvavwA_lu-tz7DCFLIxPCQISNFe45_c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "570579196949-a4g4joj57kfga2rv533nmhdcf8q0sc8g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
