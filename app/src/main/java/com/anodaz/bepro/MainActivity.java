@@ -15,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,11 +30,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.anodaz.bepro.Service.DBSqlite;
 import com.pusher.client.Pusher;
 import com.pusher.client.PusherOptions;
 import com.pusher.client.channel.Channel;
 import com.pusher.client.channel.SubscriptionEventListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -53,26 +57,70 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 public class MainActivity extends AppCompatActivity {
-    Button button,test;
-    TextView textView;
-
+    Button getImage,histo,test;
+    Switch power;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        button=(Button)findViewById(R.id.button);
-        textView = (TextView) findViewById(R.id.textid);
-        //showNotification("ggg"+new Random().nextInt(),"yy9" +
-               // ""+new Random().nextInt());
+        getImage=(Button)findViewById(R.id.getImage);
         test=(Button)findViewById(R.id.test);
+        histo=(Button)findViewById(R.id.histo);
+
+        power = findViewById(R.id.power);
+        power.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // do something, the isChecked will be
+                // true if the switch is in the On position
+                if(power.isChecked()){
+                    Long tsLong = System.currentTimeMillis()/1000;
+                    String data = "{\"name\":\"server\",\"channel\":\"anodaz\",\"data\":\"on\"}";
+                    String key="1c3ec83d21f8e9a21faf";
+                    String secret="48f1360c9c5a8102b603";
+                    String path="/apps/753307/events";
+                    String md5data=md5(data);
+                    String timestamp=tsLong.toString();
+                    String queryString="auth_key="+key+"&auth_timestamp="+timestamp+"&auth_version=1.0&body_md5="+md5data;
+                    //String authSig = MyHashHmac("POST\n" + path + "\n" + queryString, secret);
+                    //String authSig = MyHashHmac("POST\n" + path + "\n" + queryString, secret);
+                    String authSig = hmacSha256(""+secret,"POST\n" + path + "\n" + queryString);
+                    String url="https://api-eu.pusher.com"+path+"?"+queryString+"&auth_signature="+authSig;
+                    System.out.println(url);
+                    new  MyAsyncTaskgetNews().execute(url,"on");
+                }else{
+                    Long tsLong = System.currentTimeMillis()/1000;
+                    String data = "{\"name\":\"server\",\"channel\":\"anodaz\",\"data\":\"off\"}";
+                    String key="1c3ec83d21f8e9a21faf";
+                    String secret="48f1360c9c5a8102b603";
+                    String path="/apps/753307/events";
+                    String md5data=md5(data);
+                    String timestamp=tsLong.toString();
+                    String queryString="auth_key="+key+"&auth_timestamp="+timestamp+"&auth_version=1.0&body_md5="+md5data;
+                    //String authSig = MyHashHmac("POST\n" + path + "\n" + queryString, secret);
+                    //String authSig = MyHashHmac("POST\n" + path + "\n" + queryString, secret);
+                    String authSig = hmacSha256(""+secret,"POST\n" + path + "\n" + queryString);
+                    String url="https://api-eu.pusher.com"+path+"?"+queryString+"&auth_signature="+authSig;
+                    System.out.println(url);
+                    new  MyAsyncTaskgetNews().execute(url,"off");
+                }
+            }
+        });
+        histo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //showNotification(10,"20/12/2019", "1HhGn0jrox4fl6BKespJVQ52RfETXWSWM","Active");
+                Class historiqueClass=Historique.class;
+                Intent i = new Intent(MainActivity.this, historiqueClass);
+                startActivity(i);
+            }
+        });
         test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showNotification("1HhGn0jrox4fl6BKespJVQ52RfETXWSWM", "1HhGn0jrox4fl6BKespJVQ52RfETXWSWM");
-
+                showNotification("20/12/2019", "1HhGn0jrox4fl6BKespJVQ52RfETXWSWM","Active");
             }
         });
-        button.setOnClickListener(new View.OnClickListener() {
+        getImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Long tsLong = System.currentTimeMillis()/1000;
@@ -89,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
                 String url="https://api-eu.pusher.com"+path+"?"+queryString+"&auth_signature="+authSig;
                 System.out.println(url);
                 new  MyAsyncTaskgetNews().execute(url,"GetImage");
-
             }
         });
         PusherOptions options = new PusherOptions();
@@ -100,20 +147,21 @@ public class MainActivity extends AppCompatActivity {
         channel.bind("app", new SubscriptionEventListener() {
             @Override
             public void onEvent(String channelName, String eventName, String data) {
-                showNotification(data,data);
-                System.out.println(data);
+                try {
+                    JSONObject objs = new JSONObject(data);
+                    //db.additem(objs.getInt("id"),objs.getString("date"),objs.getString("image"),objs.getString("status"));
+                    showNotification(objs.getString("date"),objs.getString("image"),objs.getString("status"));
+                    System.out.println(data);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
         pusher.connect();
     }
     private void nextPage(String progress) {
-        textView.setText(progress);
-    }
 
-    public static String hmacSha1(String KEY, String VALUE) {
-        return hmacSha(KEY, VALUE, "HmacSHA1");
     }
-
     public static String hmacSha256(String KEY, String VALUE) {
         return hmacSha(KEY, VALUE, "HmacSHA256");
     }
@@ -256,7 +304,9 @@ public class MainActivity extends AppCompatActivity {
 
    
 
-    private void showNotification(String title, String id) {
+    private void showNotification(String date,String image,String status) {
+        DBSqlite db = new DBSqlite(MainActivity.this);
+        int id = db.additem(date,image,status);
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         String NOTIFICATION_CHANNEL_ID = "com.anodaz.bepro.test";
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
@@ -271,17 +321,18 @@ public class MainActivity extends AppCompatActivity {
         }
         Intent intent=new Intent(this,ImageActivity.class);
         Bundle b=new Bundle();
-        b.putString("id", id);
-        b.putString("title", title);
+        b.putInt("id", id);
+        b.putString("date", date);
+        b.putString("image", image);
+        b.putString("status", status);
         intent.putExtras(b);
-
         PendingIntent pendingIntent=PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this,NOTIFICATION_CHANNEL_ID);
         notificationBuilder.setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
-                .setContentTitle(title)
-                .setContentText(title)
+                .setContentTitle("id :"+id+" => "+status)
+                .setContentText("Date : "+date)
                 .setContentInfo("Info")
                 .setContentIntent(pendingIntent)
                 .setSmallIcon(R.drawable.ic_notification);

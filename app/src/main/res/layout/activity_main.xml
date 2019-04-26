@@ -7,39 +7,49 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/textid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="Rezult"
-        app:layout_constraintBottom_toTopOf="@+id/button"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.676" />
-
     <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="208dp"
-        android:text="Get Image"
+        android:id="@+id/test"
+        android:layout_width="123dp"
+        android:layout_height="106dp"
+        android:layout_marginBottom="144dp"
+        android:background="@drawable/ic_map"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/test"
-        android:layout_width="106dp"
-        android:layout_height="67dp"
-        android:text="Test"
-        tools:layout_editor_absoluteX="147dp"
-        tools:layout_editor_absoluteY="169dp" />
+        android:id="@+id/getImage"
+        android:layout_width="123dp"
+        android:layout_height="106dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/ic_photo"
+        app:layout_constraintBottom_toTopOf="@+id/histo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/power"
+        app:layout_constraintVertical_bias="0.252" />
+
+    <Button
+        android:id="@+id/histo"
+        android:layout_width="123dp"
+        android:layout_height="106dp"
+        android:layout_marginBottom="64dp"
+        android:background="@drawable/ic_histo"
+        app:layout_constraintBottom_toTopOf="@+id/test"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Switch
+        android:id="@+id/power"
+        android:layout_width="49dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

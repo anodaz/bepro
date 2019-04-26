@@ -15,13 +15,14 @@ public class ImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image);
         Bundle b=getIntent().getExtras();
-        System.out.println("id : "+b.getString("id"));
-        String id=b.getString("id");
-        System.out.println("id : "+b.getString("title"));
-        String title=b.getString("title");
+        System.out.println("id : "+b.getInt("id"));
+        System.out.println("date : "+b.getString("date"));
+        System.out.println("image : "+b.getString("image"));
+        System.out.println("status : "+b.getString("status"));
+        String image=b.getString("image");
         textView=(TextView) findViewById(R.id.textView);
         imageView=(ImageView)findViewById(R.id.image);
-        textView.setText("anodaz: "+title);
-        Picasso.get().load("https://drive.google.com/uc?id="+id).into(imageView);
+        textView.setText("id: "+b.getInt("id")+" date: "+b.getString("date")+" image: "+b.getString("image")+" status: "+b.getString("status"));
+        Picasso.get().load("https://drive.google.com/uc?id="+image).into(imageView);
     }
 }
